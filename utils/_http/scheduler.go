@@ -3,7 +3,7 @@ package _http
 import (
 	"fmt"
 	"net/http"
-	"send/utils/_rand"
+	"github.com/wellopen/send/utils/_rand"
 	"sync"
 	"time"
 )

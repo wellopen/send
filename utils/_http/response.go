@@ -3,7 +3,7 @@ package _http
 import (
 	"fmt"
 	"net/http"
-	"send/utils/_json"
+	"github.com/wellopen/send/utils/_json"
 	"sync"
 	"time"
 )

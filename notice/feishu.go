@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"send/utils/_http"
+	"github.com/wellopen/send/utils/_http"
 )
 
 func SendFeishu(url, msg string) {

@@ -95,7 +95,7 @@ func newReaders(list []Reader) (*readers, error) {
 		err error
 		r   = &readers{}
 	)
-	
+
 	for _, v := range list {
 		if v.AsPayload() {
 			if r.payload {
@@ -108,7 +108,7 @@ func newReaders(list []Reader) (*readers, error) {
 			r.list = append(r.list, v)
 		}
 	}
-	
+
 	return r, err
 }
 
@@ -119,7 +119,7 @@ type readers struct {
 }
 
 func (p readers) Json() io.Reader {
-	
+
 	if p.payload {
 		d, err := json.Marshal(p.item.Value())
 		if err != nil {
@@ -127,7 +127,7 @@ func (p readers) Json() io.Reader {
 		}
 		return bytes.NewReader(d)
 	}
-	
+
 	var builder strings.Builder
 	builder.WriteString("{")
 	l := len(p.list)
@@ -149,15 +149,15 @@ func (p readers) Json() io.Reader {
 		if i != l-1 {
 			builder.WriteString(",")
 		}
-		
+
 	}
 	builder.WriteString("}")
-	
+
 	return strings.NewReader(builder.String())
 }
 
 func (p readers) Multipart(req *Request) io.Reader {
-	
+
 	if p.payload {
 		switch t := p.item.Value().(type) {
 		case []byte:
@@ -166,7 +166,7 @@ func (p readers) Multipart(req *Request) io.Reader {
 			panic(fmt.Errorf("unsupport %s cast to multipart data", t))
 		}
 	}
-	
+
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 	defer func() {
@@ -196,7 +196,7 @@ func (p readers) Multipart(req *Request) io.Reader {
 }
 
 func (p readers) WriteFile(writer *multipart.Writer, reader fileReader) (err error) {
-	
+
 	file, err := os.Open(reader.path)
 	if err != nil {
 		return
@@ -204,22 +204,22 @@ func (p readers) WriteFile(writer *multipart.Writer, reader fileReader) (err err
 	defer func() {
 		_ = file.Close()
 	}()
-	
+
 	part, err := writer.CreateFormFile(reader.key, filepath.Base(reader.path))
 	_, err = io.Copy(part, file)
 	if err != nil {
 		return
 	}
-	
+
 	return
 }
 
 func (p readers) UrlEncoded() io.Reader {
-	
+
 	if p.payload {
 		panic(fmt.Errorf("unsupport cast as payload reader to url values"))
 	}
-	
+
 	params := url.Values{}
 	for _, v := range p.list {
 		switch v.(type) {
@@ -229,7 +229,7 @@ func (p readers) UrlEncoded() io.Reader {
 			params.Add(v.(fileReader).key, fmt.Sprintf("%v", v.Value()))
 		}
 	}
-	
+
 	return strings.NewReader(params.Encode())
 }
 
